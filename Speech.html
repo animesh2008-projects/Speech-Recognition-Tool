@@ -1,0 +1,102 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Multilingual Speech Recognition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      padding: 2rem;
+      text-align: center;
+      color: #333;
+    }
+
+    h1 {
+      color: #007bff;
+    }
+
+    select, button {
+      padding: 0.8rem;
+      font-size: 1rem;
+      margin: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #output {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌍 Multilingual Speech Recognition</h1>
+  <p>Select a language and speak. Your speech will be converted into text.</p>
+
+  <label for="languageSelect">Choose Language:</label>
+  <select id="languageSelect">
+    <option value="en-US">English </option>
+    <option value="hi-IN">Hindi </option>
+    <option value="bn-IN">Bengali </option>
+    <option value="ta-IN">Tamil </option>
+    <option value="gu-IN">Gujarati </option>
+    <option value="mr-IN">Marathi </option>
+  </select>
+
+  <br>
+  <button id="startBtn">🎙️ Start Listening</button>
+
+  <div id="output">Your spoken words will appear here...</div>
+
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const output = document.getElementById('output');
+    const languageSelect = document.getElementById('languageSelect');
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      output.textContent = "❌ Speech recognition is not supported in your browser.";
+      startBtn.disabled = true;
+    } else {
+      const recognition = new SpeechRecognition();
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      startBtn.addEventListener('click', () => {
+        const selectedLang = languageSelect.value;
+        recognition.lang = selectedLang;
+
+        output.textContent = `🎤 Listening in ${languageSelect.options[languageSelect.selectedIndex].text}...`;
+        recognition.start();
+      });
+
+      recognition.onresult = (event) => {
+        const speechResult = event.results[0][0].transcript;
+        output.textContent = `✅ You said: "${speechResult}"`;
+      };
+
+      recognition.onerror = (event) => {
+        output.textContent = "⚠️ Error: " + event.error;
+      };
+    }
+  </script>
+</body>
+</html>
